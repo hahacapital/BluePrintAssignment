@@ -62,7 +62,7 @@ Once `info.isBootstrapped` reports `true` for X/P/C chains and peers are stable:
 
 1. Export the staking certificate key pair if needed (stored in `./data/staking`).
 2. Use **Avalanche-CLI** (recommended) or the **Avalanche Wallet** to add your validator:
-   ```bash
+```bash
    # Install Avalanche-CLI (example)
 curl -sSfL https://github.com/ava-labs/avalanche-cli/releases/latest/download/avalanche-cli_linux_amd64.tar.gz -o avalanche-cli.tar.gz
 tar -xzf avalanche-cli.tar.gz
@@ -78,7 +78,7 @@ avalanche validator add \
   --reward-address <YourPChainAddress> \
   --change-address <YourPChainAddress> \
   --network fuji
-   ```
+```
    Alternatively, in the Avalanche Wallet: **Earn → Validate → Add Validator** and paste your `NodeID`, start/end times (14 days minimum), stake amount, and reward address.
 
 Transaction confirmation can be tracked via the Fuji explorer once mined.
