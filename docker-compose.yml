@@ -1,0 +1,27 @@
+version: '3.9'
+services:
+  avalanchego:
+    image: avaplatform/avalanchego:v1.11.7
+    container_name: avalanchego
+    restart: unless-stopped
+    user: "1000:1000"
+    volumes:
+      - ./config/config.json:/home/avalanche/.avalanchego/config.json:ro
+      - ./data:/home/avalanche/.avalanchego
+    ports:
+      - "9650:9650"   # HTTP API (C-Chain, Info, Health)
+      - "9651:9651"   # Staking port
+    environment:
+      - AVALANCHEGO_METRICS_ENABLED=true
+    command:
+      - --network-id=fuji
+      - --staking-tls-enabled=true
+      - --staking-port=9651
+      - --http-host=0.0.0.0
+      - --http-port=9650
+      - --public-ip=${PUBLIC_IP}
+      - --log-level=info
+      - --api-admin-enabled=true
+      - --api-metrics-enabled=true
+      - --api-health-enabled=true
+      - --index-enabled=true
