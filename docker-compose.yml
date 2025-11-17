@@ -4,16 +4,15 @@ services:
     image: avaplatform/avalanchego:v1.11.7
     container_name: avalanchego
     restart: unless-stopped
-    user: "1000:1000"
     entrypoint: ["/avalanchego/build/avalanchego"]
     volumes:
-      - ./config/config.json:/home/avalanche/.avalanchego/config.json:ro
-      - ./data:/home/avalanche/.avalanchego
+      - ./config/config.json:/root/.avalanchego/config.json:ro
+      - ./data:/root/.avalanchego
     ports:
       - "9650:9650"   # HTTP API (C-Chain, Info, Health)
       - "9651:9651"   # Staking port
     environment:
       - AVALANCHEGO_METRICS_ENABLED=true
     command:
-      - --config-file=/home/avalanche/.avalanchego/config.json
+      - --config-file=/root/.avalanchego/config.json
       - --public-ip=${PUBLIC_IP}

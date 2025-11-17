@@ -1,5 +1,5 @@
 {
-  "db-dir": "/home/avalanche/.avalanchego/db",
+  "db-dir": "/root/.avalanchego/db",
   "network-id": "fuji",
   "http-host": "0.0.0.0",
   "staking-port": 9651,

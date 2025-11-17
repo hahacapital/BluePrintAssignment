@@ -3,7 +3,7 @@
 This repo contains everything needed to bring up an Avalanche Fuji (testnet) validator on Ubuntu 22.04 using Docker and docker-compose. It assumes an EC2 host with public IP `54.193.165.179` and private IP `172.31.24.68`, but the steps work for any Ubuntu 22.04 host.
 
 ## Contents
-- `docker-compose.yml` – avalanchego service definition for Fuji with metrics and indexing enabled.
+- `docker-compose.yml` – avalanchego service definition for Fuji with metrics and indexing enabled (data mounted to `/root/.avalanchego` in the container).
 - `config/config.json` – runtime configuration consumed via `--config-file`.
 - `scripts/install_docker.sh` – installs Docker Engine and Compose plugin.
 - `scripts/start_validator.sh` – starts avalanchego with your `PUBLIC_IP` export.
@@ -45,6 +45,8 @@ docker compose logs -f --tail=200
 ./scripts/check_health.sh
 ```
 You should see `"healthy": true` after bootstrap and a non-zero peer count via `info.peers`.
+
+> Note: the container now runs as root and writes to `/root/.avalanchego`. If you previously ran with a non-root user, reset the host data directory permissions with `sudo chown -R root:root data` to avoid plugin directory permission errors.
 
 ## 4) Get your NodeID
 ```bash
@@ -92,7 +94,7 @@ See `monitoring/metrics.md` for command snippets. Key points:
 After the validator tx is accepted, find your node on the Fuji explorer by searching for the NodeID. Share the explorer URL for validation statistics as a deliverable.
 
 ## Data persistence and upgrades
-- All state lives in `./data`; keep the volume attached between restarts.
+- All state lives in `./data`, which maps to `/root/.avalanchego` inside the container; keep the volume attached between restarts.
 - To upgrade avalanchego: update `image: avaplatform/avalanchego:<version>` in `docker-compose.yml` then run `docker compose pull && docker compose up -d`.
 
 ## Operational tips
