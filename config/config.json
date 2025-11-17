@@ -4,7 +4,6 @@
   "http-host": "0.0.0.0",
   "staking-port": 9651,
   "http-port": 9650,
-  "public-ip": "REPLACE_WITH_PUBLIC_IP",
   "log-level": "info",
   "bootstrap-beacon-connection-timeout": "2m",
   "bootstrap-max-time-get-ancestors": "30s",

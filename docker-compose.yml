@@ -5,6 +5,7 @@ services:
     container_name: avalanchego
     restart: unless-stopped
     user: "1000:1000"
+    entrypoint: ["/avalanchego/build/avalanchego"]
     volumes:
       - ./config/config.json:/home/avalanche/.avalanchego/config.json:ro
       - ./data:/home/avalanche/.avalanchego
@@ -14,14 +15,5 @@ services:
     environment:
       - AVALANCHEGO_METRICS_ENABLED=true
     command:
-      - --network-id=fuji
-      - --staking-tls-enabled=true
-      - --staking-port=9651
-      - --http-host=0.0.0.0
-      - --http-port=9650
+      - --config-file=/home/avalanche/.avalanchego/config.json
       - --public-ip=${PUBLIC_IP}
-      - --log-level=info
-      - --api-admin-enabled=true
-      - --api-metrics-enabled=true
-      - --api-health-enabled=true
-      - --index-enabled=true

@@ -4,7 +4,7 @@ This repo contains everything needed to bring up an Avalanche Fuji (testnet) val
 
 ## Contents
 - `docker-compose.yml` – avalanchego service definition for Fuji with metrics and indexing enabled.
-- `config/config.json` – runtime configuration; set `public-ip` to your node's reachable IP.
+- `config/config.json` – runtime configuration consumed via `--config-file`.
 - `scripts/install_docker.sh` – installs Docker Engine and Compose plugin.
 - `scripts/start_validator.sh` – starts avalanchego with your `PUBLIC_IP` export.
 - `scripts/check_health.sh` – quick health RPC probe.
@@ -25,7 +25,13 @@ chmod +x scripts/install_docker.sh
 ```
 
 ## 2) Configure avalanchego
-Update the public IP in `config/config.json` to the host's public IP (e.g., `54.193.165.179`). Optionally override at runtime via `PUBLIC_IP` env var.
+The compose service uses `--config-file` plus a runtime `PUBLIC_IP` override. Export your reachable public IP before starting (required for staking):
+
+```bash
+export PUBLIC_IP=54.193.165.179  # replace with your host's public IP
+```
+
+If you prefer a static configuration file, you can also set `"public-ip"` inside `config/config.json`, but the `PUBLIC_IP` environment variable will take precedence.
 
 ## 3) Start the node
 ```bash
