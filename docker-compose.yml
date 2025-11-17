@@ -1,0 +1,18 @@
+version: '3.9'
+services:
+  avalanchego:
+    image: avaplatform/avalanchego:v1.14.0-fuji
+    container_name: avalanchego
+    restart: unless-stopped
+    entrypoint: ["/avalanchego/build/avalanchego"]
+    volumes:
+      - ./config:/config:ro
+      - ./data:/root/.avalanchego
+    ports:
+      - "9650:9650"   # HTTP API (C-Chain, Info, Health)
+      - "9651:9651"   # Staking port
+    environment:
+      - AVALANCHEGO_METRICS_ENABLED=true
+    command:
+      - --config-file=/config/config.json
+      - --public-ip=${PUBLIC_IP}
