@@ -1,7 +1,7 @@
 version: '3.9'
 services:
   avalanchego:
-    image: avaplatform/avalanchego:v1.11.7
+    image: avaplatform/avalanchego:v1.14.0-fuji
     container_name: avalanchego
     restart: unless-stopped
     entrypoint: ["/avalanchego/build/avalanchego"]

@@ -48,14 +48,6 @@ You should see `"healthy": true` after bootstrap and a non-zero peer count via `
 
 > Note: the container now runs as root and writes to `/root/.avalanchego`. If you previously ran with a non-root user, reset the host data directory permissions with `sudo chown -R root:root data` to avoid plugin directory permission errors.
 
-### Troubleshooting bootstrap and peers
-- `error: "network layer is unhealthy reason: not connected to a minimum of 1 peer(s) only 0"` or health output showing `connected to 0.000000%` means the node cannot form any staking connections. Double-check:
-  - `PUBLIC_IP` is set to the EC2 instance's public IP before starting.
-  - Security group and host firewalls allow inbound TCP/UDP 9651 and TCP 9650.
-  - The config file is actually loaded (with the updated compose file it is mounted at `/config/config.json`; restart if you previously ran the old compose that shadowed it).
-  - Outbound traffic to the internet is allowed so the node can reach bootstrap peers.
-- `subnets not bootstrapped` will clear after the X/P/C chains finish syncing. Re-run `./scripts/check_health.sh` and `info.isBootstrapped` every few minutes until they report `true`.
-
 ## 4) Get your NodeID
 ```bash
 curl -s -X POST --data '{"jsonrpc":"2.0","id":1,"method":"info.getNodeID"}' -H 'content-type:application/json' http://localhost:9650/ext/info | jq '.result'
