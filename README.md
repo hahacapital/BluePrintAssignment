@@ -4,7 +4,7 @@ This repo contains everything needed to bring up an Avalanche Fuji (testnet) val
 
 ## Contents
 - `docker-compose.yml` – avalanchego service definition for Fuji with metrics and indexing enabled (data mounted to `/root/.avalanchego` in the container).
-- `config/config.json` – runtime configuration consumed via `--config-file`.
+- `config/config.json` – runtime configuration consumed via `--config-file` (mounted read-only to `/config/config.json` in the container so it is not shadowed by the data volume).
 - `scripts/install_docker.sh` – installs Docker Engine and Compose plugin.
 - `scripts/start_validator.sh` – starts avalanchego with your `PUBLIC_IP` export.
 - `scripts/check_health.sh` – quick health RPC probe.
@@ -25,13 +25,13 @@ chmod +x scripts/install_docker.sh
 ```
 
 ## 2) Configure avalanchego
-The compose service uses `--config-file` plus a runtime `PUBLIC_IP` override. Export your reachable public IP before starting (required for staking):
+The compose service uses `--config-file=/config/config.json` plus a runtime `PUBLIC_IP` override. Export your reachable public IP before starting (required for staking):
 
 ```bash
 export PUBLIC_IP=54.193.165.179  # replace with your host's public IP
 ```
 
-If you prefer a static configuration file, you can also set `"public-ip"` inside `config/config.json`, but the `PUBLIC_IP` environment variable will take precedence.
+If you prefer a static configuration file, you can also set `"public-ip"` inside `config/config.json`, but the `PUBLIC_IP` environment variable will take precedence. If you change the network or staking port in the config, wipe old data with `docker compose down --volumes && rm -rf data` to avoid mixing incompatible state.
 
 ## 3) Start the node
 ```bash
@@ -47,6 +47,14 @@ docker compose logs -f --tail=200
 You should see `"healthy": true` after bootstrap and a non-zero peer count via `info.peers`.
 
 > Note: the container now runs as root and writes to `/root/.avalanchego`. If you previously ran with a non-root user, reset the host data directory permissions with `sudo chown -R root:root data` to avoid plugin directory permission errors.
+
+### Troubleshooting bootstrap and peers
+- `error: "network layer is unhealthy reason: not connected to a minimum of 1 peer(s) only 0"` or health output showing `connected to 0.000000%` means the node cannot form any staking connections. Double-check:
+  - `PUBLIC_IP` is set to the EC2 instance's public IP before starting.
+  - Security group and host firewalls allow inbound TCP/UDP 9651 and TCP 9650.
+  - The config file is actually loaded (with the updated compose file it is mounted at `/config/config.json`; restart if you previously ran the old compose that shadowed it).
+  - Outbound traffic to the internet is allowed so the node can reach bootstrap peers.
+- `subnets not bootstrapped` will clear after the X/P/C chains finish syncing. Re-run `./scripts/check_health.sh` and `info.isBootstrapped` every few minutes until they report `true`.
 
 ## 4) Get your NodeID
 ```bash

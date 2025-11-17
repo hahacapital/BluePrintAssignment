@@ -6,7 +6,7 @@ services:
     restart: unless-stopped
     entrypoint: ["/avalanchego/build/avalanchego"]
     volumes:
-      - ./config/config.json:/root/.avalanchego/config.json:ro
+      - ./config:/config:ro
       - ./data:/root/.avalanchego
     ports:
       - "9650:9650"   # HTTP API (C-Chain, Info, Health)
@@ -14,5 +14,5 @@ services:
     environment:
       - AVALANCHEGO_METRICS_ENABLED=true
     command:
-      - --config-file=/root/.avalanchego/config.json
+      - --config-file=/config/config.json
       - --public-ip=${PUBLIC_IP}

@@ -7,8 +7,9 @@ if [[ -z "$PUBLIC_IP" ]]; then
   exit 1
 fi
 
-if [[ $(id -u) -eq 0 ]]; then
-  echo "Please run as a non-root user with access to Docker (e.g., ubuntu)." >&2
+if [[ ! -f config/config.json ]]; then
+  echo "Missing config/config.json. Ensure the repo was cloned correctly." >&2
+  exit 1
 fi
 
 echo "[+] Ensuring data directory exists..."
