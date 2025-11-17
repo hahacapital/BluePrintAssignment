@@ -56,6 +56,8 @@ Record the `nodeID` for validator registration.
 
 ## 5) Obtain Fuji AVAX
 Use the Avalanche Faucet with a Fuji wallet address (Avalanche Wallet or Core extension) to request sufficient testnet AVAX to cover stake + fees. Target at least 2 AVAX for validator stake minimums on Fuji.
+1. [TESTNET FAUCET](https://core.app/tools/testnet-faucet) Go to this link to obtain testnet AVAX
+2. [Cross Chain](https://core.app/stake/cross-chain-transfer) Cross Chain transfer at least 1 AVAX from C-Chain to P-Chain
 
 ## 6) Add the validator (14-day minimum)
 Once `info.isBootstrapped` reports `true` for X/P/C chains and peers are stable:
