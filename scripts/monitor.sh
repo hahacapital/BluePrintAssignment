@@ -24,7 +24,7 @@ print_metric() {
   local metric=$1
   local label=$2
   local value
-  value=$(awk -v m="$metric" '$1==m {print $2; exit}' <<<"${metrics_payload}")
+  value=$(awk -v m="$metric" '$1 ~ "^" m "(\\{|$)" {print $2; exit}' <<<"${metrics_payload}")
   if [[ -n ${value} ]]; then
     printf "%s: %s\n" "$label" "$value"
   else
@@ -35,11 +35,9 @@ print_metric() {
 print_section "Readiness & Sync"
 health=$(call_rpc "health.health")
 bool_health=$(jq -r '.result.healthy // false' <<<"${health}")
-network_health=$(jq -r '.result.checks.network.healthy // false' <<<"${health}")
-router_health=$(jq -r '.result.checks.router.healthy // false' <<<"${health}")
 bootstrapped=$(call_rpc "info.isBootstrapped" '{"chain":"C"}' | jq -r '.result.isBootstrapped // false')
 peer_count=$(call_rpc "info.peers" | jq -r '.result.numPeers // 0')
-echo "Health: ${bool_health} (network: ${network_health}, router: ${router_health})"
+echo "Health: ${bool_health}"
 echo "Bootstrapped (C-Chain): ${bootstrapped}"
 echo "Responsive peers: ${peer_count}"
 
@@ -49,9 +47,8 @@ validator_found=$(jq -r '.result.validators | length' <<<"${validators}")
 if [[ ${validator_found} -gt 0 ]]; then
   start_time=$(jq -r '.result.validators[0].startTime // ""' <<<"${validators}")
   end_time=$(jq -r '.result.validators[0].endTime // ""' <<<"${validators}")
-  stake_amount=$(jq -r '.result.validators[0].stakeAmount // ""' <<<"${validators}")
   printf "Validator present for %s\n" "${NODE_ID}"
-  [[ -n ${start_time} ]] && printf "Start: %s | End: %s | Stake: %s\n" "${start_time}" "${end_time}" "${stake_amount}"
+  [[ -n ${start_time} ]] && printf "Start: %s | End: %s\n" "${start_time}" "${end_time}"
 else
   echo "Validator not found in current set (NodeID: ${NODE_ID})."
 fi
