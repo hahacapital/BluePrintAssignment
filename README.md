@@ -9,7 +9,7 @@ This repo contains everything needed to bring up an Avalanche Fuji (testnet) val
 - `scripts/start_validator.sh` – starts avalanchego with your `PUBLIC_IP` export.
 - `scripts/check_health.sh` – quick health RPC probe.
 - `scripts/monitor.sh` – one-shot view of readiness, validator status, and key Prometheus metrics.
-- `monitoring/metrics.md` – monitoring queries and metric names to track validator health.
+
 
 ## Prerequisites
 - Ubuntu 22.04 server with ports 9650 (HTTP API) and 9651 (staking) reachable from the internet.
@@ -62,37 +62,9 @@ Use the Avalanche Faucet with a Fuji wallet address (Avalanche Wallet or Core ex
 
 ## 6) Add the validator (14-day minimum)
 Once `info.isBootstrapped` reports `true` for X/P/C chains and peers are stable:
-
-1. Export the staking certificate key pair if needed (stored in `./data/staking`).
-2. Use **Avalanche-CLI** (recommended) or the **Avalanche Wallet** to add your validator:
-```bash
-   # Install Avalanche-CLI (example)
-curl -sSfL https://github.com/ava-labs/avalanche-cli/releases/latest/download/avalanche-cli_linux_amd64.tar.gz -o avalanche-cli.tar.gz
-tar -xzf avalanche-cli.tar.gz
-sudo mv avalanche /usr/local/bin/
-
-   # Add validator (replace placeholders)
-avalanche validator add \
-  --node-id <YourNodeID> \
-  --tx-fee 2000000 \
-  --stake-amount 2000000000 \
-  --start-time "now+2m" \
-  --end-time "now+14d" \
-  --reward-address <YourPChainAddress> \
-  --change-address <YourPChainAddress> \
-  --network fuji
-```
-   Alternatively, in the Avalanche Wallet: **Earn → Validate → Add Validator** and paste your `NodeID`, start/end times (14 days minimum), stake amount, and reward address.
-
-Transaction confirmation can be tracked via the Fuji explorer once mined.
+Use [Validate](https://core.app/stake/validate) to register node as validator
 
 ## 7) Monitoring essentials
-See `monitoring/metrics.md` for command snippets. Quick summary:
-- `health.health` == `healthy: true`
-- `info.peers` numPeers steadily > 0
-- `platform.getCurrentValidators` includes your `NodeID`
-- Prometheus metrics available at `:9650/ext/metrics`
-
 Use the bundled monitor script to print readiness, validator progress, and the requested metrics in one run:
 
 ```bash
@@ -102,18 +74,18 @@ NODE_ID=NodeID-KPS44VwPPYEaN1gVmaoDqZHHfs4rbWA9Q ./scripts/monitor.sh
 ```
 
 ## 8) Validator visibility
-After the validator tx is accepted, find your node on the Fuji explorer by searching for the NodeID. Share the explorer URL for validation statistics as a deliverable.
+[TestNet Explorer for NodeID-KPS44VwPPYEaN1gVmaoDqZHHfs4rbWA9Q](https://subnets-test.avax.network/validators/NodeID-KPS44VwPPYEaN1gVmaoDqZHHfs4rbWA9Q)
 
-## Data persistence and upgrades
+## 9) Data persistence and upgrades
 - All state lives in `./data`, which maps to `/root/.avalanchego` inside the container; keep the volume attached between restarts.
 - To upgrade avalanchego: update `image: avaplatform/avalanchego:<version>` in `docker-compose.yml` then run `docker compose pull && docker compose up -d`.
 
-## Operational tips
+## 10) Operational tips
 - Ensure EC2 security group allows inbound TCP/UDP 9651 and TCP 9650.
 - Use `systemctl status docker` if the service stops unexpectedly.
 - Snapshot the EBS volume before upgrades.
 
-## Cleaning up
+## 11) Cleaning up
 ```bash
 docker compose down --volumes
 rm -rf data
