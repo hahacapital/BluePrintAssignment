@@ -8,6 +8,7 @@ This repo contains everything needed to bring up an Avalanche Fuji (testnet) val
 - `scripts/install_docker.sh` – installs Docker Engine and Compose plugin.
 - `scripts/start_validator.sh` – starts avalanchego with your `PUBLIC_IP` export.
 - `scripts/check_health.sh` – quick health RPC probe.
+- `scripts/monitor.sh` – one-shot view of readiness, validator status, and key Prometheus metrics.
 - `monitoring/metrics.md` – monitoring queries and metric names to track validator health.
 
 ## Prerequisites
@@ -86,11 +87,19 @@ avalanche validator add \
 Transaction confirmation can be tracked via the Fuji explorer once mined.
 
 ## 7) Monitoring essentials
-See `monitoring/metrics.md` for command snippets. Key points:
+See `monitoring/metrics.md` for command snippets. Quick summary:
 - `health.health` == `healthy: true`
 - `info.peers` numPeers steadily > 0
 - `platform.getCurrentValidators` includes your `NodeID`
 - Prometheus metrics available at `:9650/ext/metrics`
+
+Use the bundled monitor script to print readiness, validator progress, and the requested metrics in one run:
+
+```bash
+chmod +x scripts/monitor.sh
+NODE_ID=NodeID-KPS44VwPPYEaN1gVmaoDqZHHfs4rbWA9Q ./scripts/monitor.sh
+# Override HOST/PORT/NODE_ID to target a different node
+```
 
 ## 8) Validator visibility
 After the validator tx is accepted, find your node on the Fuji explorer by searching for the NodeID. Share the explorer URL for validation statistics as a deliverable.
